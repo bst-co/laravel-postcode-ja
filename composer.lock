@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41aaaa8862b5a4e4af9c3ffe4cb0d6f3",
+    "content-hash": "47e92c6004ee3e8a8839375a78645214",
     "packages": [
         {
             "name": "brick/math",
@@ -5711,16 +5711,16 @@
         },
         {
             "name": "orchestra/workbench",
-            "version": "v7.16.0",
+            "version": "v7.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/workbench.git",
-                "reference": "2c8df6758a46b65c9edd4a97c7fadd6e829a803f"
+                "reference": "d7319f6e763caeef0f4189ca85a07a39102b71e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/workbench/zipball/2c8df6758a46b65c9edd4a97c7fadd6e829a803f",
-                "reference": "2c8df6758a46b65c9edd4a97c7fadd6e829a803f",
+                "url": "https://api.github.com/repos/orchestral/workbench/zipball/d7319f6e763caeef0f4189ca85a07a39102b71e5",
+                "reference": "d7319f6e763caeef0f4189ca85a07a39102b71e5",
                 "shasum": ""
             },
             "require": {
@@ -5771,9 +5771,9 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/workbench/issues",
-                "source": "https://github.com/orchestral/workbench/tree/v7.16.0"
+                "source": "https://github.com/orchestral/workbench/tree/v7.17.0"
             },
-            "time": "2024-12-24T01:31:48+00:00"
+            "time": "2024-12-24T11:26:17+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -7486,7 +7486,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-curl": "*",
         "ext-mbstring": "*",
         "ext-zip": "*"

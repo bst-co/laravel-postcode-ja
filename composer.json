@@ -1,7 +1,7 @@
 {
     "name": "bst-co/laravel-postcode-ja",
     "type": "project",
-    "version": "0.1.0",
+    "version": "0.2.1",
     "keywords": [
         "laravel",
         "postalcode"
@@ -16,7 +16,7 @@
     "require": {
         "php": "^8.1",
         "ext-curl": "*",
-        "laravel/framework": "^9.10.0",
+        "laravel/framework": "^9.10.0|^10.0|^11.0",
         "ext-mbstring": "*",
         "ext-zip": "*"
     },
@@ -27,14 +27,14 @@
     "autoload": {
         "psr-4": {
             "BstCo\\PostcodeJa\\": "src/",
-            "BstCo\\PostcodeJa\\Database\\Factories\\": "database/factories/",
-            "BstCo\\PostcodeJa\\Database\\Seeders\\": "database/seeders/"
+            "BstCo\\PostcodeJa\\Database\\Factories\\": "database/factories",
+            "BstCo\\PostcodeJa\\Database\\Seeders\\": "database/seeders"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "BstCo\\PostcodeJa\\Test\\Unit": "tests/Unit",
-            "BstCo\\PostcodeJa\\Test\\Feature": "tests/Feature"
+            "BstCo\\PostcodeJa\\Test\\Unit\\": "tests/Unit",
+            "BstCo\\PostcodeJa\\Test\\Feature\\": "tests/Feature"
         }
     },
     "extra": {
