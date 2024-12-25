@@ -4,30 +4,42 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
-        Schema::create('post_codes', function (Blueprint $table) {
+        Schema::connection(config('postcode.database'))->create('post_codes', function (Blueprint $table) {
             $table->id()
                 ->comment('#ID');
 
-            $table->string('country_code', 3);
+            $table->string('country_code', 2)
+                ->comment('Country Code Alpha-2');
 
-            $table->string('zip_code', 16);
+            $table->string('postcode', 16)
+                ->comment('Post Code');
 
-            $table->unique(['country_code', 'zip_code']);
+            $table->unique(['country_code', 'postcode']);
+
+            $table->string('postcode_formatted', 16)
+                ->index()
+                ->comment('Formatted Post Code');
 
             $table->string('state_id', 3)
-                ->index();
+                ->index()
+                ->comment('State Code');
 
             $table->string('city_id', 3)
-                ->index();
+                ->index()
+                ->comment('City Code');
 
-            $table->string('state');
+            $table->string('state')
+                ->comment('State Name');
 
-            $table->string('city');
+            $table->string('city')
+                ->comment('City Name');
 
-            $table->string('address');
+            $table->string('address')
+                ->comment('Address');
 
             $table->datetime('created_at')
                 ->nullable();
@@ -42,6 +54,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('post_codes');
+        Schema::connection(config('postcode.database'))->dropIfExists('post_codes');
     }
 };
