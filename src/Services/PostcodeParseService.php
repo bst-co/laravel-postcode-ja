@@ -40,7 +40,7 @@ class PostcodeParseService
 
         $this->storage = Storage::build([
             'driver' => 'local',
-            'root' => storage_path('postcode'),
+            'root' => storage_path('app/postcode'),
         ]);
 
         if (empty($this->country->source)) {
