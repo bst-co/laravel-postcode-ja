@@ -2,9 +2,9 @@
 
 namespace BstCo\PostcodeJa\Services;
 
+use BstCo\PostcodeJa\Exceptions\CountryCodeException;
+use BstCo\PostcodeJa\Exceptions\ParsingException;
 use BstCo\PostcodeJa\Services\PostcodeParse\ParseInterface;
-use ErrorException;
-use Exception;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\File;
@@ -19,10 +19,7 @@ class PostcodeParseService
      */
     private readonly Filesystem $storage;
 
-    /**
-     * ソースセット
-     */
-    private readonly array $source;
+    private readonly Country $country;
 
     /**
      * 処理が終わったら削除するファイルリスト
@@ -32,28 +29,27 @@ class PostcodeParseService
     /**
      * 処理対象国コード
      *
-     * @throws Exception
+     * @throws ParsingException
+     * @throws CountryCodeException
      */
     public function __construct(
-        public readonly string $country_code,
+        string $country_code,
         public readonly bool $force = false,
     ) {
+        $this->country = Country::safeMake($country_code);
+
         $this->storage = Storage::build([
             'driver' => 'local',
             'root' => storage_path('postcode'),
         ]);
 
-        $source = config('postcode.source.'.$this->country_code);
-
-        if (! is_array($source) || empty($source)) {
-            throw new Exception('source not found');
+        if (empty($this->country->source)) {
+            throw new ParsingException('source not found');
         }
-
-        $this->source = $source;
     }
 
     /**
-     * @throws ErrorException
+     * @throws ParsingException
      */
     public function run(): void
     {
@@ -62,7 +58,7 @@ class PostcodeParseService
 
         $parsers = config('postcode.parsers');
 
-        $interface = data_get($parsers, strtoupper($this->country_code));
+        $interface = data_get($parsers, $this->country->code);
 
         if (is_a($interface, ParseInterface::class, true)) {
             (new $interface($file))->parse();
@@ -70,13 +66,18 @@ class PostcodeParseService
             return;
         }
 
-        throw new ErrorException("source#{$this->country_code} Parser not defined.");
+        throw new ParsingException("source#{$this->country->code} Parser not defined.");
     }
 
-    protected function expand(File $file)
+    /**
+     * 圧縮ファイルの場合は展開してファイルを抽出
+     *
+     * @throws ParsingException
+     */
+    protected function expand(File $file): File
     {
         $mime = $file->getMimeType();
-        $expand_dir = $this->storage->path($this->country_code).'.expand';
+        $expand_dir = $this->storage->path($this->country->code).'.expand';
 
         if ($this->storage->exists($expand_dir)) {
             $this->storage->deleteDirectory($expand_dir);
@@ -92,35 +93,42 @@ class PostcodeParseService
             return $file;
         }
 
-        $expand_file = data_get($this->source, 'file');
+        $expand_file = $this->country->expand;
 
         if (empty($expand_file)) {
-            throw new ErrorException("source#{$this->country_code} is expand file not defined");
+            throw new ParsingException("source#{$this->country->code} is expand file not defined");
         }
 
         $expand_path = $expand_dir.DIRECTORY_SEPARATOR.$expand_file;
 
         if (! file_exists($expand_path)) {
-            throw new ErrorException("source#{$this->country_code} is expand file '$expand_file' not found");
+            throw new ParsingException("source#{$this->country->code} is expand file '$expand_file' not found");
         }
 
         return new File($expand_path);
     }
 
-    protected function download()
+    /**
+     * 対象ファイルをダウンロードする
+     *
+     * @return File|null
+     *
+     * @throws ParsingException
+     */
+    protected function download(): ?File
     {
-        if (empty($this->source['url'])) {
-            throw new ErrorException("source#{$this->country_code} is url not found");
+        if (empty($this->country->source)) {
+            throw new ParsingException("source#{$this->country->code} is url not found");
         }
 
-        $local_path = $this->country_code.'.raw';
+        $local_path = $this->country->code.'.raw';
         $real_path = $this->storage->path($local_path);
 
         if (file_exists($real_path) && filectime($real_path) > time() - 24 * 60 * 60 && ! $this->force) {
             $file = new File($real_path);
         } else {
 
-            $resource = fopen($this->source['url'], 'r');
+            $resource = fopen($this->country->source, 'r');
 
             $this->storage->put($local_path, $resource);
 
@@ -141,7 +149,7 @@ class PostcodeParseService
 
     protected function hashPath(): string
     {
-        return $this->country_code.'.'.static::HASH_ALGORITHM;
+        return $this->country->code.'.'.static::HASH_ALGORITHM;
     }
 
     protected function getHash(): string

@@ -3,16 +3,24 @@
 namespace BstCo\PostcodeJa\Services\PostcodeParse;
 
 use BstCo\PostcodeJa\Models\PostCode;
+use BstCo\PostcodeJa\Services\Country;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 
 abstract class ParseBase implements ParseInterface
 {
+    protected readonly Country $country;
+
     private ?Collection $collect = null;
 
+    /**
+     * @throws \BstCo\PostcodeJa\Exceptions\CountryCodeException
+     */
     public function __construct(
         protected readonly File $file
-    ) {}
+    ) {
+        $this->country = Country::safeMake($this->countryCode());
+    }
 
     final public function parse(): void
     {
@@ -21,7 +29,7 @@ abstract class ParseBase implements ParseInterface
         $this->pull();
 
         // 削除された項目を強制排除
-        PostCode::whereCountryCode($this->countryCode())
+        PostCode::whereCountryCode($this->country->code)
             ->onlyTrashed()
             ->forceDelete();
     }
@@ -69,7 +77,7 @@ abstract class ParseBase implements ParseInterface
     {
         $count = PostCode::upsert(
             $this->collect->toArray(),
-            ['zip_code', 'country_code'],
+            ['postcode', 'country_code'],
             (new PostCode)->getFillable(),
         );
 

@@ -1,0 +1,58 @@
+{
+    "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
+    "completions": [
+        {
+            "complete": "configKey",
+            "options": {
+                "prefix": "postcode.sources"
+            },
+            "condition": [
+                {
+                    "classFqn": [
+                        "\\BstCo\\PostcodeJa\\Models\\PostCode"
+                    ],
+                    "methodNames": [
+                        "scopeSearch"
+                    ],
+                    "parameters": [
+                        3
+                    ]
+                },
+                {
+                    "classFqn": [
+                        "\\BstCo\\PostcodeJa\\Models\\PostCode"
+                    ],
+                    "methodNames": [
+                        "search"
+                    ],
+                    "parameters": [
+                        2
+                    ]
+                },
+                {
+                    "newClassFqn": [
+                        "\\BstCo\\PostcodeJa\\Services\\Country",
+                        "\\BstCo\\PostcodeJa\\Services\\PostcodeParseService"
+                    ],
+                    "parameters": [
+                        1
+                    ]
+                },
+                {
+                    "classFqn": [
+                        "\\BstCo\\PostcodeJa\\Services\\Country"
+                    ],
+                    "methodNames": [
+                        "get",
+                        "safeGet",
+                        "make",
+                        "safeMake"
+                    ],
+                    "parameters": [
+                        1
+                    ]
+                }
+            ]
+        }
+    ]
+}

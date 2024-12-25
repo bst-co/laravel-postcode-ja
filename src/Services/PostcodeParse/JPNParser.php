@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
 class JPNParser extends ParseBase implements ParseInterface
 {
     /**
-     * @throws ErrorException
+     * @throws ErrorException|\BstCo\PostcodeJa\Exceptions\CountryCodeException
      */
     public function __construct(
         File $file
@@ -26,7 +26,7 @@ class JPNParser extends ParseBase implements ParseInterface
 
     public function parsing(): void
     {
-        PostCode::whereCountryCode($this->countryCode())->delete();
+        PostCode::whereCountryCode($this->country->code)->delete();
 
         $reader = new SplFileObject($this->file->getPathname());
         $reader->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY | SplFileObject::READ_AHEAD | SplFileObject::DROP_NEW_LINE);
@@ -62,8 +62,9 @@ class JPNParser extends ParseBase implements ParseInterface
 
             $model = (new PostCode)
                 ->fill([
-                    'country_code' => $this->countryCode(),
-                    'zip_code' => $datum['zip_code'],
+                    'country_code' => $this->country->code,
+                    'postcode' => $datum['zip_code'],
+                    'postcode_formatted' => $this->country->format($datum['zip_code']),
                     'state_id' => $datum['state_id'],
                     'city_id' => $datum['city_id'],
                     'state' => $datum['state'],

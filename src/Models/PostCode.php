@@ -2,6 +2,7 @@
 
 namespace BstCo\PostcodeJa\Models;
 
+use BstCo\PostcodeJa\Services\Country;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +16,8 @@ class PostCode extends Model
      */
     protected $fillable = [
         'country_code',
-        'zip_code',
+        'postcode',
+        'postcode_formatted',
         'state_id',
         'city_id',
         'state',
@@ -23,23 +25,28 @@ class PostCode extends Model
         'address',
     ];
 
-    protected static function boot(): void
+    /**
+     * {@inheritdoc}
+     */
+    public function getConnectionName()
     {
-        parent::boot();
+        return config('postcode.database', parent::getConnectionName());
     }
 
     /**
      * Search Post Code
-     * @param Builder|PostCode $query
-     * @param string $zip_code Search Zip Code
-     * @param string|null $country_code Country Code (default = config.postcode.country.default)
-     * @return Builder|PostCode
+     *
+     * @param  string  $postcode  Search PostalCode
+     * @param  string|null  $country_code  Country Code (default = config.postcode.country.default)
+     *
      * @noinspection PhpUnused
      */
-    public function scopeSearch(Builder|PostCode $query, string $zip_code, ?string $country_code = null): Builder|PostCode
+    public function scopeSearch(Builder|PostCode $query, string $postcode, ?string $country_code = null): Builder|PostCode
     {
+        $country = Country::make($country_code);
+
         return $query
-            ->where('zip_code', 'like', $zip_code.'%')
-            ->where('country_code', '=', $country_code ?? config('postcode.country.default'));
+            ->where('postcode_formatted', '=', $country->format($postcode))
+            ->where('country_code', '=', $country->code);
     }
 }
