@@ -19,6 +19,10 @@ class PostcodeJaServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+
+        $this->publishes([
+            __DIR__ . '/../../config/postcode.php' => config_path('postcode.php'),
+        ], 'postcode-config');
     }
 
     /**

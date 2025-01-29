@@ -16,6 +16,13 @@ php artisan postcode:create
 
 ---
 
+## 設定のカスタマイズ
+
+`vendor:publish` により、設定ファイルをプロジェクト側で変更できるようになります。
+```bash
+php artisan vendor:publish --tag=postcode-config
+```
+
 ## 郵便番号の検索
 
 次のコードにより、郵便番号の検索を行うことができます。

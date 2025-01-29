@@ -56,7 +56,5 @@ class PostCodeCommandTest extends TestCase
             $this->assertEquals($model->city, $value['city']);
             $this->assertEquals($model->address, $value['address']);
         }
-
-        PostCode::inRandomOrder()->limit(5)->get()->dump();
     }
 }
