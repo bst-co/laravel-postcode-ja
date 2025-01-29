@@ -4,6 +4,7 @@ namespace BstCo\PostcodeJa\Services;
 
 use BstCo\PostcodeJa\Exceptions\CountryCodeException;
 use BstCo\PostcodeJa\Exceptions\ParsingException;
+use BstCo\PostcodeJa\Models\PostCode;
 use BstCo\PostcodeJa\Services\PostcodeParse\ParseInterface;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
@@ -62,6 +63,10 @@ class PostcodeParseService
 
         if (is_a($interface, ParseInterface::class, true)) {
             (new $interface($file))->parse();
+
+            if (PostCode::whereCountryCode($this->country->code)->count() === 0) {
+                throw new ParsingException("source#{$this->country->code} is not imported");
+            }
 
             return;
         }
