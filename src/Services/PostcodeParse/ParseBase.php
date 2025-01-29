@@ -34,7 +34,7 @@ abstract class ParseBase implements ParseInterface
             ->forceDelete();
     }
 
-    abstract protected function parsing();
+    abstract protected function parsing(): void;
 
     /**
      * 国コード取得
