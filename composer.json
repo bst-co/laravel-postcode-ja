@@ -1,7 +1,7 @@
 {
     "name": "bst-co/laravel-postcode-ja",
     "type": "project",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "keywords": [
         "laravel",
         "postalcode"
